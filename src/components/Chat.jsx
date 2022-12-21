@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { database, ref, push, onValue } from "../firebase";
 function Chat({ name }) {
   const [inputMessage, setInputMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const inputRef = useRef();
   useEffect(() => {
     onValue(ref(database, "message"), (data) => {
       let getMsg = [];
@@ -10,6 +11,8 @@ function Chat({ name }) {
         getMsg.push(d.val());
       });
       setMessages(getMsg);
+      setInputMessage("");
+      inputRef.current.focus();
     });
   }, []);
   const handleSendMsg = () => {
@@ -39,6 +42,7 @@ function Chat({ name }) {
         onChange={(e) => {
           setInputMessage(e.target.value);
         }}
+        ref={inputRef}
       />
       <button onClick={handleSendMsg}>Send</button>
     </div>
